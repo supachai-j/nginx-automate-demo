@@ -1,0 +1,47 @@
+## Deploy nginx to all hosts
+---
+- hosts: all
+  remote_user: vagrant
+  become: yes
+  become_method: sudo
+  gather_facts: yes
+
+  collections:
+    - nginxinc.nginx_core
+
+  roles:
+    - role: nginx
+      vars:
+        nginx_type: plus
+        nginx_license:
+          certificate: ../nginx-lic/nginx-repo.crt
+          key: ../nginx-lic/nginx-repo.key
+        nginx_remove_license: false
+
+    # Service For Web CLI.
+    - role: cndies.gotty
+      vars:
+        gotty_port: "9090"
+        gotty_enable_basic_auth: "true"
+        gotty_basic_credential: "nginx:nginx"
+        gotty_cmd: "/bin/bash"
+        gotty_permit_write: "true"
+
+  tasks:
+    ## Disable SELinux and Reboot For Testing Only.
+    - name: Disabling SELinux
+      selinux:
+        state: disabled
+      register: selinuxdisabled
+
+    - name: Print the changes in Configurtion file
+      command: grep SELINUX /etc/sysconfig/selinux
+      register: sevalue
+    - debug:
+        var: sevalue.stdout_lines
+
+    - name: Wait for 5 Second and Reboot
+      shell: "sleep 5 && reboot"
+      async: 1
+      poll: 0
+      when: selinuxdisabled is changed

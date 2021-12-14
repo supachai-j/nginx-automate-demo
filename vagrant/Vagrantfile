@@ -1,0 +1,33 @@
+Vagrant.configure("2") do |config|
+    config.vm.provision "shell",
+
+      # Allow User Root Login For Testing Only.
+      inline: "sudo sed -i 's/^#PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config && sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config && systemctl restart sshd"
+
+    config.vm.define "nginx-oss01" do |target1|
+      target1.vm.hostname = "nginxoss01"
+      target1.vm.box = "centos/7"
+      target1.vm.network "private_network", ip: "192.168.55.41"
+      target1.vm.provision :ansible do |ansible|
+        ansible.playbook = '../ansible/1-deploy-nginx-oss.yml'
+        #ansible.verbose = "v"
+        ansible.host_key_checking = false
+      end
+    end
+  
+    config.vm.define "nginx-plus01" do |target2|
+      target2.vm.hostname = "nginxplus01"
+      target2.vm.box = "centos/7"
+      target2.vm.network "private_network", ip: "192.168.55.42"
+      target2.vm.provision :ansible do |ansible|
+        ansible.playbook = '../ansible/2-deploy-nginx-plus.yml'
+        #ansible.verbose = "vvv"
+        ansible.host_key_checking = false
+       end
+    end
+
+    config.vm.provider "virtualbox" do |v|
+        v.gui = false
+      end
+
+  end

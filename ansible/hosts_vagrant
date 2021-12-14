@@ -1,0 +1,14 @@
+
+[nginxoss01]
+192.168.55.41
+
+[nginxplus01]
+192.168.55.42
+
+[nginxoss01:vars]
+ansible_ssh_user=vagrant
+ansible_ssh_private_key_file=../vagrant/.vagrant/machines/nginx-oss01/virtualbox/private_key
+
+[nginxplus01:vars]
+ansible_ssh_user=vagrant
+ansible_ssh_private_key_file=../vagrant/.vagrant/machines/nginx-plus01/virtualbox/private_key
