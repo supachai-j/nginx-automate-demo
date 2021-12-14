@@ -1,6 +1,9 @@
 # NGINX Automation Demo
 Webinar NGINX Automation Demo
 
+## Presentation Slides 
+Sharing Slides: https://bit.ly/NGINXAutomate
+
 ## Prerequisite Environement 
 - PC / Notebook (Windows, MacOS, Linux)
 - Installed VirutalBox and Vagrant.
